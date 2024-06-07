@@ -1,0 +1,4 @@
+include avl.txt
+
+let t := Y0 in
+(t.isEmpty[null])

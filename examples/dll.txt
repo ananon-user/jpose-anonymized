@@ -1,0 +1,143 @@
+class Object { }
+
+class Void extends Object { }
+
+class Entry extends Object {
+  Object element;
+  Entry next;
+  Entry previous;
+}
+
+class AddParameters extends Object {
+  int index;
+  Object elem;
+}
+
+class AddBeforeParameters extends Object {
+  Object o;
+  Entry e;
+}
+
+class SetParameters extends Object {
+  int index2;
+  Object element2;
+}
+
+class IndexOfLoopFrame extends Object {
+  Object o1;
+  int index1;
+  Entry entry1;
+}
+
+class DllEntryLoopFrame extends Object {
+  Entry entry;
+  int i;
+  int idx;
+}
+
+class DoubleLinkedList extends Object {
+  Entry header;
+  int size;
+  int depthBound;
+
+  Void add(AddParameters pAdd) :=
+    let pAddBefore := new AddBeforeParameters in
+    let foo1 := (pAddBefore.o := (pAdd.elem)) in
+    let foo2 := if ((pAdd.index) = (this.size))
+      then (pAddBefore.e := (this.header))
+      else (pAddBefore.e := (this.entry[(pAdd.index)])) in
+    let foo3 := (this.addBefore[pAddBefore]) in
+    new Void;
+
+  Entry entry(int index) :=
+    let f := new DllEntryLoopFrame in
+    let foo1 := (f.entry := (this.header)) in
+    let foo2 := (f.i := 0) in
+    let foo3 := (f.idx := index) in
+    let fPost := (this.doEntryLoop[f]) in
+    (fPost.entry);
+
+  DllEntryLoopFrame doEntryLoop(DllEntryLoopFrame f) :=
+    if ((f.idx) < (f.i)) then f else
+    if ((f.entry) = null) then f else
+      let foo1 := (f.entry := ((f.entry).next)) in
+      let foo2 := (f.i := ((f.i) + 1)) in
+      (this.doEntryLoop[f]);
+
+  Entry addBefore(AddBeforeParameters pAddBefore) :=
+    let newEntry := new Entry in
+    let foo1 := (newEntry.element := (pAddBefore.o)) in
+    let foo2 := (newEntry.next := (pAddBefore.e)) in
+    let foo3 := (newEntry.previous := ((pAddBefore.e).previous)) in
+    let foo4 := ((newEntry.previous).next := newEntry) in
+    let foo5 := ((newEntry.next).previous := newEntry) in
+    let foo6 := (this.size := ((this.size) + 1)) in
+    newEntry;
+
+  Void removeE(Entry e) :=
+    if ((this.header) = e) then null else
+    let foo1 := ((e.previous).next := (e.next)) in
+    let foo2 := ((e.next).previous := (e.previous)) in
+    let foo3 := (this.size := ((this.size) - 1)) in
+    new Void;
+
+  Object remove(int ind) :=
+    let e := (this.entry[ind]) in
+    let foo1 := (this.removeE[e]) in
+    (e.element);
+
+  Object removeFirst(Void n) :=
+    let e := ((this.header).next) in
+    let objFirst := (e.element) in
+    let foo1 := (this.removeE[e]) in
+    objFirst;
+
+  Object removeLast(Void n) :=
+    let e := ((this.header).previous) in
+    let objLast := (e.element) in
+    let foo1 := (this.removeE[e]) in
+    objLast;
+
+  Object getFirst(Void arg) :=
+    if ((this.size) = 0) then null else
+    let h := ((this.header).next) in 
+    (h.element);
+
+  Object getLast(Void arg) :=
+    if ((this.size) = 0) then null else
+    let h := ((this.header).previous) in 
+    (h.element);
+
+  Object get(int ind) :=
+    let e := (this.entry[ind]) in
+    (e.element);
+
+  Object set(SetParameters s) :=
+    let e := (this.entry[(s.index2)]) in
+    let oldVal := (e.element) in
+    let foo1 := (e.element := (s.element2)) in
+    oldVal;
+      
+  int doIndexOfLoop1(IndexOfLoopFrame res) :=
+    let e := (res.entry1) in
+    if ((e.element) = null) then (res.index1) else if ((e.next) = null) then (0 - 1) else if ((this.depthBound) < (res.index1)) then (0 - 1) else
+    let foo1 := (res.entry1 := (e.next)) in
+    let foo2 := (res.index1 := ((res.index1) + 1)) in
+    (this.doIndexOfLoop1[res]);
+
+  int doIndexOfLoop2(IndexOfLoopFrame res) :=
+    let e := (res.entry1) in
+    if ((e.element) = (res.o1)) then (res.index1) else if ((e.next) = null) then (0 - 1) else if ((this.depthBound) < (res.index1)) then (0 - 1) else
+    let foo1 := (res.entry1 := (e.next)) in
+    let foo2 := (res.index1 := ((res.index1) + 1)) in
+    (this.doIndexOfLoop2[res]);
+
+  int indexOf(Object o) :=
+    let res := new IndexOfLoopFrame in
+    let e := ((this.header).next) in
+    let foo1 := (res.o1 := o) in
+    let foo2 := (res.entry1 := e) in
+    let foo3 := (res.index1 := 0) in
+    if (o = null) then (this.doIndexOfLoop1[res]) else
+    (this.doIndexOfLoop2[res]);
+}
